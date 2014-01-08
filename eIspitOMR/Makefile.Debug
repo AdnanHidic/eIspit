@@ -14,10 +14,10 @@ CXX           = g++
 DEFINES       = -DUNICODE -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
 CFLAGS        = -pipe -fno-keep-inline-dllexport -g -Wall -Wextra $(DEFINES)
 CXXFLAGS      = -pipe -fno-keep-inline-dllexport -g -frtti -Wall -Wextra -fexceptions -mthreads $(DEFINES)
-INCPATH       = -I. -I"E:\Qt\5.2.0\mingw48_32\include" -I"E:\Qt\5.2.0\mingw48_32\include\QtWidgets" -I"E:\Qt\5.2.0\mingw48_32\include\QtGui" -I"E:\Qt\5.2.0\mingw48_32\include\QtCore" -I"debug" -I"." -I"E:\Qt\5.2.0\mingw48_32\mkspecs\win32-g++"
+INCPATH       = -I. -I"..\openCV\include" -I"E:\Qt\5.2.0\mingw48_32\include" -I"E:\Qt\5.2.0\mingw48_32\include\QtWidgets" -I"E:\Qt\5.2.0\mingw48_32\include\QtGui" -I"E:\Qt\5.2.0\mingw48_32\include\QtCore" -I"debug" -I"." -I"E:\Qt\5.2.0\mingw48_32\mkspecs\win32-g++"
 LINKER      =        g++
 LFLAGS        =        -Wl,-subsystem,windows -mthreads
-LIBS        =        -lglu32 -lopengl32 -lgdi32 -luser32 -lmingw32 -lqtmaind -LE:\Qt\5.2.0\mingw48_32\lib -lQt5Widgetsd -lQt5Guid -lQt5Cored 
+LIBS        =        -lglu32 -lopengl32 -lgdi32 -luser32 -lmingw32 -lqtmaind "-LD:\ETF\P MMS\Seminarski\eIspit\openCV\x64\mingw\bin" -lopencv_core248 -lopencv_highgui248 -LE:\Qt\5.2.0\mingw48_32\lib -lQt5Widgetsd -lQt5Guid -lQt5Cored 
 QMAKE         = E:\Qt\5.2.0\mingw48_32\bin\qmake.exe
 IDC           = idc
 IDL           = midl
@@ -357,7 +357,15 @@ debug/main.o: main.cpp mainwindow.h \
 		E:/Qt/5.2.0/mingw48_32/include/QtCore/qeventloop.h \
 		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qdesktopwidget.h \
 		E:/Qt/5.2.0/mingw48_32/include/QtGui/qguiapplication.h \
-		E:/Qt/5.2.0/mingw48_32/include/QtGui/qinputmethod.h
+		E:/Qt/5.2.0/mingw48_32/include/QtGui/qinputmethod.h \
+		../openCV/include/opencv2/core/core.hpp \
+		../openCV/include/opencv2/core/types_c.h \
+		../openCV/include/opencv2/core/version.hpp \
+		../openCV/include/opencv2/core/operations.hpp \
+		../openCV/include/opencv2/core/mat.hpp \
+		../openCV/include/opencv2/highgui/highgui.hpp \
+		../openCV/include/opencv2/highgui/highgui_c.h \
+		../openCV/include/opencv2/core/core_c.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\main.o main.cpp
 
 debug/mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -472,7 +480,45 @@ debug/mainwindow.o: mainwindow.cpp mainwindow.h \
 		E:/Qt/5.2.0/mingw48_32/include/QtGui/qtouchdevice.h \
 		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qtabwidget.h \
 		E:/Qt/5.2.0/mingw48_32/include/QtGui/qicon.h \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtCore/QVariant \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QAction \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qaction.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qactiongroup.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QApplication \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qapplication.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtCore/qcoreapplication.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtCore/qeventloop.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qdesktopwidget.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtGui/qguiapplication.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtGui/qinputmethod.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QButtonGroup \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qbuttongroup.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QHeaderView \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qheaderview.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qabstractitemview.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qabstractscrollarea.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qframe.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtCore/qabstractitemmodel.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtCore/qitemselectionmodel.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qabstractitemdelegate.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qstyleoption.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qabstractspinbox.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtGui/qvalidator.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtCore/qregularexpression.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qslider.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qabstractslider.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qstyle.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qtabbar.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qrubberband.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QMenuBar \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qmenubar.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qmenu.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QStatusBar \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qstatusbar.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QToolBar \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/qtoolbar.h \
+		E:/Qt/5.2.0/mingw48_32/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\mainwindow.o mainwindow.cpp
 
 debug/moc_mainwindow.o: debug/moc_mainwindow.cpp 
