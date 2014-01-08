@@ -6,6 +6,7 @@
 # samo zavisi gdje ste na svom racunaru instalirali ovo
 #
 #-------------------------------------------------
+include(models/models.pri)
 
 QT       += core gui
 
@@ -22,8 +23,8 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-INCLUDEPATH += "D:\ETF\P MMS\Seminarski\eIspit\openCV\include"
+INCLUDEPATH += openCV\include
 
-LIBS += -L"D:\ETF\P MMS\Seminarski\eIspit\openCV\x64\mingw\bin" \
+LIBS += -LopenCV\x64\mingw\bin \
         -lopencv_core248 \
         -lopencv_highgui248
