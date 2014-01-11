@@ -2,7 +2,16 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
-    models/question.h
+    models/examgroup.h \
+    models/enumerations.h \
+    models/exam.h \
+    models/finishedexam.h \
+    models/thejudge.h \
+    models/imageprocessor.h
 
 SOURCES += \
-    models/question.cpp
+    models/examgroup.cpp \
+    models/exam.cpp \
+    models/finishedexam.cpp \
+    models/thejudge.cpp \
+    models/imageprocessor.cpp
