@@ -30,7 +30,11 @@ FinishedExam TheJudge::markOne(const QList<ExamGroup> &groups, const QString &im
     // first we get the exam from imagepath
     exam = ImageProcessor::load_exam(imagePath);
 
-    // then we find the correct group
+    // if something went wrong
+    if (!exam.valid())
+        return exam;
+
+    // else if everything is okay, we find the correct group
     QList<AnswerID> answers = findAnswersForGroup(groups,exam.groupID());
 
     // then mark the exam
@@ -40,12 +44,12 @@ FinishedExam TheJudge::markOne(const QList<ExamGroup> &groups, const QString &im
     return exam;
 }
 
-QList<FinishedExam> TheJudge::mark(const QList<ExamGroup> &groups, const QList<QString> &imagePaths)
+QList<FinishedExam>* TheJudge::mark(const QList<ExamGroup> &groups, const QList<QString> &imagePaths)
 {
-    QList<FinishedExam> exams;
+    QList<FinishedExam> *exams = new QList<FinishedExam>();
 
     foreach (QString imagePath, imagePaths){
-        exams.append(markOne(groups,imagePath));
+        exams->append(markOne(groups,imagePath));
     }
 
     // return the result

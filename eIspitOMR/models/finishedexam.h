@@ -11,6 +11,7 @@ class FinishedExam
     GroupID _groupID;
     QList<AnswerID> _answers;
     double _points;
+    bool _valid;
 public:
     FinishedExam();
     FinishedExam(QString candidateID, GroupID groupID, QList<AnswerID> answers);
@@ -22,6 +23,8 @@ public:
     void setAnswers(const QList<AnswerID> &answers);
     double points() const;
     void setPoints(double points);
+    bool valid() const;
+    void setValid(bool valid);
 };
 
 #endif // FINISHEDEXAM_H

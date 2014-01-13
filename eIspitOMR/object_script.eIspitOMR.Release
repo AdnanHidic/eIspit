@@ -1,0 +1,12 @@
+INPUT(
+./release\examgroup.o
+./release\exam.o
+./release\finishedexam.o
+./release\thejudge.o
+./release\imageprocessor.o
+./release\enumerations.o
+./release\imagepreprocessor.o
+./release\main.o
+./release\mainwindow.o
+./release\moc_mainwindow.o
+);

@@ -12,7 +12,8 @@ enum AnswerID {
 };
 
 enum GroupID {
-    GroupID_A = 1,
+    GroupID_NONE = 0,
+    GroupID_A,
     GroupID_B,
     GroupID_C,
     GroupID_D,

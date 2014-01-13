@@ -14,7 +14,7 @@ class TheJudge
     static QList<AnswerID> findAnswersForGroup(const QList<ExamGroup> &groups, GroupID group_id);
     static FinishedExam markOne(const QList<ExamGroup> &groups, const QString &imagePath);
 public:
-    static QList<FinishedExam> mark(const QList<ExamGroup> &groups, const QList<QString> &imagePaths);
+    static QList<FinishedExam> *mark(const QList<ExamGroup> &groups, const QList<QString> &imagePaths);
 
 };
 

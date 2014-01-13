@@ -7,7 +7,8 @@ HEADERS += \
     models/exam.h \
     models/finishedexam.h \
     models/thejudge.h \
-    models/imageprocessor.h
+    models/imageprocessor.h \
+    models/imagepreprocessor.h
 
 SOURCES += \
     models/examgroup.cpp \
@@ -15,4 +16,5 @@ SOURCES += \
     models/finishedexam.cpp \
     models/thejudge.cpp \
     models/imageprocessor.cpp \
-    models/enumerations.cpp
+    models/enumerations.cpp \
+    models/imagepreprocessor.cpp

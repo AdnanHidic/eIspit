@@ -1,0 +1,12 @@
+INPUT(
+./debug\examgroup.o
+./debug\exam.o
+./debug\finishedexam.o
+./debug\thejudge.o
+./debug\imageprocessor.o
+./debug\enumerations.o
+./debug\imagepreprocessor.o
+./debug\main.o
+./debug\mainwindow.o
+./debug\moc_mainwindow.o
+);

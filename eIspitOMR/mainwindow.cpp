@@ -50,7 +50,7 @@ void MainWindow::mark()
     // rezultat dodijelite finishedExams varijabli.
     //
     // npr:
-    // finishedExams = theJudge->mark(loadedExam->examgroups(), loadedImages());
+    finishedExams = theJudge->mark(loadedExam->examgroups(), loadedImages());
 
     if (finishedExams && finishedExams->count() > 0)
     {

@@ -1,6 +1,16 @@
 #include "finishedexam.h"
 
 
+
+bool FinishedExam::valid() const
+{
+    return _valid;
+}
+
+void FinishedExam::setValid(bool valid)
+{
+    _valid = valid;
+}
 FinishedExam::FinishedExam()
 {
 }
