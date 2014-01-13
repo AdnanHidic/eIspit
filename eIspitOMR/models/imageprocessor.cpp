@@ -2,6 +2,8 @@
 
 const int ImageProcessor::group_bbox_x_coordinates [] = {16, 40, 64, 88, 112, 136, 160, 184};
 
+const QString ImageProcessor::groupchars [] = {"A","B","C","D","E","F","G","H"};
+const QString ImageProcessor::groupnums [] = {"1","2","3","4","5","6","7","8"};
 
 ///
 /// \brief ImageProcessor::extract Na osnovu pripremljene slike formira instnacu klase uradjen ispit
@@ -12,6 +14,7 @@ FinishedExam ImageProcessor::extract(Mat img)
 {
     FinishedExam exam;
 
+    // extraction of group
     GroupID gid = extract_group(img);
 
     // if group was not detected
@@ -24,7 +27,8 @@ FinishedExam ImageProcessor::extract(Mat img)
     }
 
 
-    /*QString candidateID = extract_candidateID(img);
+    // extraction of candidate ID
+    QString candidateID = extract_candidateID(img);
 
     // if candidate ID was not detected or is incorrect
     if (candidateID.length()==0){
@@ -33,7 +37,7 @@ FinishedExam ImageProcessor::extract(Mat img)
     }
     else{
         exam.setCandidateID(candidateID);
-    }*/
+    }
 
     exam.setValid(true);
     return exam;
@@ -54,7 +58,7 @@ GroupID ImageProcessor::extract_group(const Mat &img)
 
     GroupID detected = GroupID_NONE;
 
-    int criteria = group_bbox_height*group_bbox_width*group_success_pct;
+    int criteria = bbox_height*bbox_width*group_success_pct;
     for (int i=0;i<8;i++){
         if (number_of_pixels[i]>=criteria){
             if (detected!=GroupID_NONE)
@@ -77,8 +81,8 @@ QVector<int> ImageProcessor::count_pixels_group(const Mat &img)
     for (int i=0;i<8;i++){
         x = group_bbox_x_coordinates[i];
         // foreach characteristic point within group
-        for (int j=x;j<x+group_bbox_width;j++){
-            for (int k=y;k<y+group_bbox_height;k++){
+        for (int j=x;j<x+bbox_width;j++){
+            for (int k=y;k<y+bbox_height;k++){
                 uchar c = img.at<uchar>(k,j);
                 if (c==0)
                     number_of_pixels[i]++;
@@ -87,6 +91,71 @@ QVector<int> ImageProcessor::count_pixels_group(const Mat &img)
         }
     }
     return number_of_pixels;
+}
+
+// data about candidate id need to be located within rectangle
+// rectangle starts @75,580 and width=132, height=172
+// returns empty string if the detection encountered a problem
+QString ImageProcessor::extract_candidateID(const Mat &img)
+{
+    // first we get the subimage that contains our Region Of Interest
+    Mat ROI(img,Rect(75,580,132,172));
+    int criteria = bbox_height*bbox_width*group_success_pct;
+
+    // then we get the indexes of filled bounding boxes one by one, if multiple are selected, empty string is returned
+    // foreach group
+    QVector<int> detected_px;
+    QString cid = "";
+    for (int i = 0; i < 5; i++){
+        // get vector of counted px at each characteristic position
+        detected_px = count_pixels_by_column(ROI, cid_bbox_x_start + i*cid_bbox_x_offset, cid_bbox_y_start, cid_bbox_y_offset, 8);
+
+        // then for each position
+        for (int j = 0; j < 8; j++){
+            // if there are many px's at it
+            if (detected_px[j]>=criteria){
+                // add symbol to string
+                if (i<3)
+                    cid+= groupchars[j];
+                else
+                    cid+= groupnums[j];
+            }
+        }
+        // its an error yo
+        if (cid.size()!=(i+1))
+            return "";
+    }
+
+    //imshow("Subsection", ROI);
+
+    return cid;
+}
+
+
+// counts pixels in the entire column
+QVector<int> ImageProcessor::count_pixels_by_column(const Mat &img, int startX, int startY, int diffY, int num)
+{
+    QVector<int> number_of_pixels(num);
+    int x = startX,y;
+    for (int i = 0; i < num ; i++){
+        y = i * diffY + startY;
+        // now we have the top left corner of the bounding box
+        for (int j = x; j < x+bbox_width; j++){
+            for (int k = y; k < y+bbox_width; k++){
+                uchar c = img.at<uchar>(k,j);
+                if (c==0)
+                    number_of_pixels[i]++;
+            }
+        }
+    }
+
+    return number_of_pixels;
+}
+
+
+QList<AnswerID> ImageProcessor::extract_answers(const Mat &img)
+{
+
 }
 
 FinishedExam ImageProcessor::load_exam(QString path)
