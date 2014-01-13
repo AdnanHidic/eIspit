@@ -1,29 +1,37 @@
 #include "thejudge.h"
 
-void TheJudge::applyCriteria(const QList<AnswerID> &criteria, FinishedExam &exam)
+void TheJudge::applyCriteria(const QList<AnswerID> &answers, FinishedExam &exam)
 {
     double points;
     points = 0;
-    for (int i=0; i < criteria.size();i++){
-        if (exam.answers()[i]==criteria[i])
+    for (int i=0; i < answers.size();i++){
+        if (exam.answers()[i]==answers[i])
             points+=points_per_correct_answer;
     }
     exam.setPoints(points);
 }
 
-void TheJudge::applyCriteria(const QList<AnswerID> &criteria, QList<FinishedExam> &exams)
+QList<AnswerID> TheJudge::findAnswersForGroup(const QList<ExamGroup> &groups, GroupID group_id)
 {
-    foreach (FinishedExam exam, exams) {
-        applyCriteria(criteria,exam);
+    QList<AnswerID> answers;
+    for (int i=0;i<groups.size();i++){
+        if (groups[i].id()==group_id){
+            answers = groups[i].answers();
+            break;
+        }
     }
+    return answers;
 }
 
-FinishedExam TheJudge::markOne(const QList<AnswerID> &answers, const QString &imagePath)
+FinishedExam TheJudge::markOne(const QList<ExamGroup> &groups, const QString &imagePath)
 {
     FinishedExam exam;
 
-    // first load the image, handle execeptions
+    // first we get the exam from imagepath
     exam = ImageProcessor::load_exam(imagePath);
+
+    // then we find the correct group
+    QList<AnswerID> answers = findAnswersForGroup(groups,exam.groupID());
 
     // then mark the exam
     applyCriteria(answers,exam);
@@ -32,12 +40,12 @@ FinishedExam TheJudge::markOne(const QList<AnswerID> &answers, const QString &im
     return exam;
 }
 
-QList<FinishedExam> TheJudge::markMultiple(const QList<AnswerID> &answers, const QList<QString> &imagePaths)
+QList<FinishedExam> TheJudge::mark(const QList<ExamGroup> &groups, const QList<QString> &imagePaths)
 {
     QList<FinishedExam> exams;
 
     foreach (QString imagePath, imagePaths){
-        exams.append(markOne(answers,imagePath));
+        exams.append(markOne(groups,imagePath));
     }
 
     // return the result

@@ -11,8 +11,12 @@ using namespace cv;
 
 class ImageProcessor
 {
+    // zuban metode
+    static Mat prepare(Mat img);
+
+    // hidex metode
+    static FinishedExam extract(Mat img);
 public:
-    static QList<FinishedExam> load_exams(QList<QString> paths);
     static FinishedExam load_exam(QString path);
 };
 

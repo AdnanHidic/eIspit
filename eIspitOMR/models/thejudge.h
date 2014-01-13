@@ -10,12 +10,11 @@
 class TheJudge
 {
     static const double points_per_correct_answer = 2;
-
-    static void applyCriteria(const QList<AnswerID> &criteria, FinishedExam &exam);
-    static void applyCriteria(const QList<AnswerID> &criteria, QList<FinishedExam> &exams);
+    static void applyCriteria(const QList<AnswerID> &answers, FinishedExam &exam);
+    static QList<AnswerID> findAnswersForGroup(const QList<ExamGroup> &groups, GroupID group_id);
+    static FinishedExam markOne(const QList<ExamGroup> &groups, const QString &imagePath);
 public:
-    static FinishedExam markOne(const QList<AnswerID> &answers, const QString &imagePath);
-    static QList<FinishedExam> markMultiple(const QList<AnswerID> &answers, const QList<QString> &imagePaths);
+    static QList<FinishedExam> mark(const QList<ExamGroup> &groups, const QList<QString> &imagePaths);
 
 };
 
