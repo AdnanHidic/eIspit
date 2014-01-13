@@ -5,20 +5,10 @@ FinishedExam::FinishedExam()
 {
 }
 
-FinishedExam::FinishedExam(QString personID, QString candidateID, GroupID groupID, QList<AnswerID> answers):
-    _personID(personID), _candidateID(candidateID), _groupID(groupID), _answers(answers)
+FinishedExam::FinishedExam(QString candidateID, GroupID groupID, QList<AnswerID> answers):
+    _candidateID(candidateID), _groupID(groupID), _answers(answers)
 {
 
-}
-
-QString FinishedExam::personID() const
-{
-    return _personID;
-}
-
-void FinishedExam::setPersonID(const QString &personID)
-{
-    _personID = personID;
 }
 
 QString FinishedExam::candidateID() const

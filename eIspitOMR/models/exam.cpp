@@ -25,7 +25,7 @@ QList<ExamGroup> Exam::examgroups() const
     return _examgroups;
 }
 
-void Exam::setExamgroups(const QList<ExamGroup> &examgroups)
+void Exam::setExamgroups(QList<ExamGroup> examgroups)
 {
     _examgroups = examgroups;
 }

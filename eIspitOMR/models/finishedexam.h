@@ -7,18 +7,13 @@
 
 class FinishedExam
 {
-    QString _personID;
     QString _candidateID;
     GroupID _groupID;
     QList<AnswerID> _answers;
     double _points;
 public:
     FinishedExam();
-    FinishedExam(QString personID, QString candidateID, GroupID groupID, QList<AnswerID> answers);
-
-
-    QString personID() const;
-    void setPersonID(const QString &personID);
+    FinishedExam(QString candidateID, GroupID groupID, QList<AnswerID> answers);
     QString candidateID() const;
     void setCandidateID(const QString &candidateID);
     GroupID groupID() const;

@@ -14,4 +14,5 @@ SOURCES += \
     models/exam.cpp \
     models/finishedexam.cpp \
     models/thejudge.cpp \
-    models/imageprocessor.cpp
+    models/imageprocessor.cpp \
+    models/enumerations.cpp

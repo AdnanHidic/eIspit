@@ -16,7 +16,7 @@ public:
     GroupID id() const;
     void setId(const GroupID &id);
     QList<AnswerID> answers() const;
-    void setAnswers(const QList<AnswerID> &answers);
+    void setAnswers(QList<AnswerID> answers);
 };
 
 #endif // EXAMGROUP_H

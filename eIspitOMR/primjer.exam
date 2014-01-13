@@ -1,0 +1,27 @@
+{
+	"naziv": "Prijemni ispit",
+	"grupe": [
+		{
+			"naziv": "A",
+			"odgovori": [
+				"A",
+				"B",
+				"C",
+				"D",
+				"A",
+				"B"
+			]
+		},
+		{
+			"naziv": "B",
+			"odgovori": [
+				"B",
+				"C",
+				"A",
+				"D",
+				"B",
+				"A"
+			]
+		}
+	]
+}

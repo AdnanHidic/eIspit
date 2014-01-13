@@ -25,7 +25,7 @@ QList<AnswerID> ExamGroup::answers() const
     return _answers;
 }
 
-void ExamGroup::setAnswers(const QList<AnswerID> &answers)
+void ExamGroup::setAnswers(QList<AnswerID> answers)
 {
     _answers = answers;
 }
