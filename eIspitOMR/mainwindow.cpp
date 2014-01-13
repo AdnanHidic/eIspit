@@ -254,7 +254,7 @@ void MainWindow::loadedExamFile()
 void MainWindow::loadExamImages()
 {
     QFileDialog openFileDialog(this);
-    openFileDialog.setFileMode(QFileDialog::ExistingFile);
+    openFileDialog.setFileMode(QFileDialog::ExistingFiles);
     openFileDialog.setNameFilter(tr("Images (*.jpg *.png *.bmp)"));
 
     QStringList selectedFilenames;
