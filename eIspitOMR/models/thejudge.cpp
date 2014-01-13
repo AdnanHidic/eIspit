@@ -37,7 +37,13 @@ FinishedExam TheJudge::markOne(const QList<ExamGroup> &groups, const QString &im
     // else if everything is okay, we find the correct group
     QList<AnswerID> answers = findAnswersForGroup(groups,exam.groupID());
 
-    // then mark the exam
+    // if there is no such group
+    if (answers.size()==0){
+        exam.setValid(false);
+        return exam;
+    }
+
+    // else, we mark the exam
     applyCriteria(answers,exam);
 
     // return the result
