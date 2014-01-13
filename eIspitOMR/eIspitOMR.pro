@@ -27,4 +27,5 @@ INCLUDEPATH += openCV\include
 
 LIBS += -LopenCV\x64\mingw\bin \
         -lopencv_core248 \
-        -lopencv_highgui248
+        -lopencv_highgui248 \
+        -lopencv_imgproc248
