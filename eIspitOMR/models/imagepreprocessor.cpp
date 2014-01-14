@@ -34,6 +34,42 @@ if(low<0 && low>1 && high <0 && high>1&&bottom<0 && bottom>1 && top<0 && top>1 &
     return 0;
 }
 
+Mat remove_small_objects( Mat img_in1, int size )
+{
+    IplImage* img_in = new IplImage(img_in1);
+    IplImage* img_out       = cvCloneImage( img_in );  // return image
+    CvMemStorage* storage   = cvCreateMemStorage( 0 );    // container of retrieved contours
+    CvSeq* contours         = NULL;
+    CvScalar black          = CV_RGB( 0, 0, 0 ); // black color
+    CvScalar white          = CV_RGB( 255, 255, 255 );   // white color
+    double area;
+
+    // find contours in binary image
+    cvFindContours( img_in, storage, &contours, sizeof( CvContour ), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE );
+
+    while( contours )   // loop over all the contours
+    {
+        area = cvContourArea( contours, CV_WHOLE_SEQ );
+        if( fabs( area ) <= size )  // if the area of the contour is less than threshold remove it
+        {
+            // draws the contours into a new image
+
+             cvDrawContours( img_out, contours, white, white, -1, CV_FILLED, 8 );
+        }
+        else
+        {
+            // fills in holes
+            //cvDrawContours( img_out, contours, black, black, -1, CV_FILLED, 8 ); // removes white dots
+        }
+        contours = contours->h_next;    // jump to the next contour
+    }
+
+    cvReleaseMemStorage( &storage );
+    Mat img = Mat(img_out);
+    return img;
+}
+
+
 Mat ImagePreprocessor::prepare(Mat img)
 {
     Mat img_gray, bin_image;
@@ -44,10 +80,12 @@ Mat ImagePreprocessor::prepare(Mat img)
     medianBlur(img_gray,img_gray,i);
   //  GaussianBlur( img_gray, img_gray, Size(9, 9), 2, 2 );
     morphologyEx(img_gray,img_gray,MORPH_CLOSE,getStructuringElement(MORPH_ELLIPSE,Size(6,6),Point(-1,-1)));
+    morphologyEx(img_gray,img_gray,MORPH_ERODE,getStructuringElement(MORPH_ELLIPSE,Size(4,4),Point(-1,-1)));
     normalize(img_gray,img_gray,0,255,NORM_MINMAX);
     threshold ( img_gray, bin_image, 0, 255, THRESH_BINARY | THRESH_OTSU );
     img = bin_image;
-    erode(bin_image,bin_image,MORPH_ELLIPSE,Point(-1,-1),100);
+    img = remove_small_objects(bin_image,200);
+    //erode(bin_image,bin_image,MORPH_ELLIPSE,Point(-1,-1),100);
     return img;
 }
 
