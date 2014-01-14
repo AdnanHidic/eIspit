@@ -10,15 +10,18 @@ using namespace cv;
 
 int main(int argc, char *argv[])
 {
-    //Mat image = cv::imread("ispit_neobradjeno.jpg");
+    /*
+
     Mat image = cv::imread("ispit_neobradjeno.jpg");
-    //imshow("Tess",ImagePreprocessor::prepare(image));
+    imshow("Tess",ImagePreprocessor::prepare(image));
 
     QTime myTimer;
     myTimer.start();
     Mat novo = ImagePreprocessor::prepare(image);
     int nMilliseconds = myTimer.elapsed();
     imshow("Tess",novo);
+
+    */
 
     QApplication a(argc, argv);
 

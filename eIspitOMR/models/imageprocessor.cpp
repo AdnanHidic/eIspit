@@ -108,8 +108,7 @@ QString ImageProcessor::extract_candidateID(const Mat &img)
     Mat ROI(img,Rect(75,580,132,172));
     int criteria = bbox_height*bbox_width*group_success_pct;
 
-
-    imshow("Subsection", ROI);
+    //imshow("Subsection", ROI);
 
     // then we get the indexes of filled bounding boxes one by one, if multiple are selected, empty string is returned
     // foreach group
