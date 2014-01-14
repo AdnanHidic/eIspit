@@ -15,7 +15,7 @@ FinishedExam::FinishedExam()
 {
 }
 
-FinishedExam::FinishedExam(QString candidateID, GroupID groupID, QList<AnswerID> answers):
+FinishedExam::FinishedExam(QString candidateID, GroupID groupID, QVector<AnswerID> answers):
     _candidateID(candidateID), _groupID(groupID), _answers(answers)
 {
 
@@ -41,12 +41,12 @@ void FinishedExam::setGroupID(const GroupID &groupID)
     _groupID = groupID;
 }
 
-QList<AnswerID> FinishedExam::answers() const
+QVector<AnswerID> FinishedExam::answers() const
 {
     return _answers;
 }
 
-void FinishedExam::setAnswers(const QList<AnswerID> &answers)
+void FinishedExam::setAnswers(const QVector<AnswerID> &answers)
 {
     _answers = answers;
 }

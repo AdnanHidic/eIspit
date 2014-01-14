@@ -8,8 +8,8 @@ using namespace cv;
 
 int main(int argc, char *argv[])
 {
-    Mat image = cv::imread("ispit_neobradjeno.jpg");
-    imshow("Tess",ImagePreprocessor::prepare(image));
+    //Mat image = cv::imread("ispit_neobradjeno.jpg");
+    //imshow("Tess",ImagePreprocessor::prepare(image));
 
     QApplication a(argc, argv);
 

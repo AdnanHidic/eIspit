@@ -1,6 +1,6 @@
 #include "thejudge.h"
 
-void TheJudge::applyCriteria(const QList<AnswerID> &answers, FinishedExam &exam)
+void TheJudge::applyCriteria(const QVector<AnswerID> &answers, FinishedExam &exam)
 {
     double points;
     points = 0;
@@ -11,12 +11,12 @@ void TheJudge::applyCriteria(const QList<AnswerID> &answers, FinishedExam &exam)
     exam.setPoints(points);
 }
 
-QList<AnswerID> TheJudge::findAnswersForGroup(const QList<ExamGroup> &groups, GroupID group_id)
+QVector<AnswerID> TheJudge::findAnswersForGroup(const QList<ExamGroup> &groups, GroupID group_id)
 {
-    QList<AnswerID> answers;
+    QVector<AnswerID> answers;
     for (int i=0;i<groups.size();i++){
         if (groups[i].id()==group_id){
-            answers = groups[i].answers();
+            answers = groups[i].answers().toVector();
             break;
         }
     }
@@ -35,7 +35,7 @@ FinishedExam TheJudge::markOne(const QList<ExamGroup> &groups, const QString &im
         return exam;
 
     // else if everything is okay, we find the correct group
-    QList<AnswerID> answers = findAnswersForGroup(groups,exam.groupID());
+    QVector<AnswerID> answers = findAnswersForGroup(groups,exam.groupID());
 
     // if there is no such group
     if (answers.size()==0){

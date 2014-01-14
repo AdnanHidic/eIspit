@@ -39,6 +39,12 @@ FinishedExam ImageProcessor::extract(Mat img)
         exam.setCandidateID(candidateID);
     }
 
+
+    // extraction of answers to questions
+    QVector<AnswerID> answers = extract_answers(img);
+
+    exam.setAnswers(answers);
+
     exam.setValid(true);
     return exam;
 }
@@ -102,6 +108,9 @@ QString ImageProcessor::extract_candidateID(const Mat &img)
     Mat ROI(img,Rect(75,580,132,172));
     int criteria = bbox_height*bbox_width*group_success_pct;
 
+
+    imshow("Subsection", ROI);
+
     // then we get the indexes of filled bounding boxes one by one, if multiple are selected, empty string is returned
     // foreach group
     QVector<int> detected_px;
@@ -126,13 +135,10 @@ QString ImageProcessor::extract_candidateID(const Mat &img)
             return "";
     }
 
-    //imshow("Subsection", ROI);
-
     return cid;
 }
 
-
-// counts pixels in the entire column
+// counts pixels in the entire column (for candidate id)
 QVector<int> ImageProcessor::count_pixels_by_column(const Mat &img, int startX, int startY, int diffY, int num)
 {
     QVector<int> number_of_pixels(num);
@@ -152,10 +158,54 @@ QVector<int> ImageProcessor::count_pixels_by_column(const Mat &img, int startX, 
     return number_of_pixels;
 }
 
-
-QList<AnswerID> ImageProcessor::extract_answers(const Mat &img)
+// counts pixels in the entire row (for exam answers)
+QVector<int> ImageProcessor::count_pixels_by_row(Mat &img, int startX, int startY, int diffX, int num)
 {
+    QVector<int> number_of_pixels(num);
+    int x, y = startY;
+    for (int i = 0; i < num ; i++){
+        x = i * diffX + startX;
 
+        //rectangle(img,Rect(x,y,bbox_height,bbox_width),Scalar(0, 255, 0));
+
+        // now we have the top left corner of the bounding box
+        for (int j = x; j < x+bbox_width; j++){
+            for (int k = y; k < y+bbox_width; k++){
+                uchar c = img.at<uchar>(k,j);
+                if (c==0)
+                    number_of_pixels[i]++;
+            }
+        }
+    }
+    return number_of_pixels;
+}
+
+QVector<AnswerID> ImageProcessor::extract_answers(const Mat &img)
+{
+    // first we get the subimage that contains our Region Of Interest
+    Mat ROI(img,Rect(386,244,100,502));
+    int criteria = bbox_height*bbox_width*answ_success_pct;
+
+    QVector<AnswerID> answers(20);
+    QVector<int> pixels_per_choice;
+    // foreach question
+    for (int i = 0; i < 20; i++){
+        pixels_per_choice = count_pixels_by_row(ROI,answ_bbox_x_start,answ_bbox_y_start + i * answ_bbox_y_offset,answ_bbox_x_offset,4);
+        for (int j = 0; j < 4; j++){
+            if (pixels_per_choice[j] >= criteria){
+                if (answers[i]==AnswerID_NONE){
+                    answers[i] = (AnswerID)(j+1);
+                }
+                else {
+                    answers[i] = AnswerID_NONE;
+                    break;
+                }
+            }
+        }
+    }
+    //imshow("Name",ROI);
+
+    return answers;
 }
 
 FinishedExam ImageProcessor::load_exam(QString path)
@@ -171,7 +221,7 @@ FinishedExam ImageProcessor::load_exam(QString path)
     }
 
     // now we prepare the image for further processing
-    img = ImagePreprocessor::prepare(img);
+    //img = ImagePreprocessor::prepare(img);
 
     // now we extract the exam from the prepared image
     exam = extract(img);

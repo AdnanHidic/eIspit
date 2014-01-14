@@ -3,24 +3,24 @@
 
 #include <enumerations.h>
 #include <QString>
-#include <QList>
+#include <QVector>
 
 class FinishedExam
 {
     QString _candidateID;
     GroupID _groupID;
-    QList<AnswerID> _answers;
+    QVector<AnswerID> _answers;
     double _points;
     bool _valid;
 public:
     FinishedExam();
-    FinishedExam(QString candidateID, GroupID groupID, QList<AnswerID> answers);
+    FinishedExam(QString candidateID, GroupID groupID, QVector<AnswerID> answers);
     QString candidateID() const;
     void setCandidateID(const QString &candidateID);
     GroupID groupID() const;
     void setGroupID(const GroupID &groupID);
-    QList<AnswerID> answers() const;
-    void setAnswers(const QList<AnswerID> &answers);
+    QVector<AnswerID> answers() const;
+    void setAnswers(const QVector<AnswerID> &answers);
     double points() const;
     void setPoints(double points);
     bool valid() const;
