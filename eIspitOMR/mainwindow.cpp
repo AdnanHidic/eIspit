@@ -54,9 +54,30 @@ void MainWindow::mark()
 
     if (finishedExams && finishedExams->count() > 0)
     {
-        QMessageBox::information(this, "Mark", "Exams have been successfully marked", QMessageBox::Ok);
-        this->ui->actionSave_results->setEnabled(true);
-        this->ui->saveResultsButton->setEnabled(true);
+        int validCount = 0;
+
+        foreach (FinishedExam finishedExam, *finishedExams)
+        {
+            if (finishedExam.valid())
+                validCount++;
+        }
+
+        if (validCount > 0)
+        {
+            if (validCount == finishedExams->count())
+                QMessageBox::information(this, "Mark", "All exams have been successfully marked", QMessageBox::Ok);
+            else
+                QMessageBox::information(this, "Mark", QString::number(validCount) + " out of " + QString::number(finishedExams->count()) + " exams have been successfully marked", QMessageBox::Ok);
+
+            this->ui->actionSave_results->setEnabled(true);
+            this->ui->saveResultsButton->setEnabled(true);
+        }
+        else
+        {
+            QMessageBox::warning(this, "Mark", "None of the exams have been marked", QMessageBox::Ok);
+            this->ui->actionSave_results->setEnabled(false);
+            this->ui->saveResultsButton->setEnabled(false);
+        }
     }
     else
     {
@@ -336,7 +357,7 @@ void MainWindow::saveExamResults()
         if (data.open(QFile::WriteOnly | QFile::Truncate))
         {
             QTextStream output(&data);
-            output << "\"Candidate ID\",\"Group\",\"Total points\"";
+            output << "\"Candidate ID\",\"Group\",\"Total points\",\"Valid result\"";
             output << endl;
 
             foreach(FinishedExam e, *finishedExams)
@@ -379,7 +400,8 @@ void MainWindow::saveExamResults()
                 }
 
                 output << "\"" << groupName << "\",";
-                output << "\"" << e.points() << "\"";
+                output << "\"" << e.points() << "\",";
+                output << "\"" << (e.valid() ? "Yes" : "No") << "\"";
                 output << endl;
             }
 
