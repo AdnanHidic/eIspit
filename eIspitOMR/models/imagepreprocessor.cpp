@@ -127,9 +127,12 @@ Mat ImagePreprocessor::prepare(Mat img)
     Mat img_gray, bin_image;
     cv::cvtColor(img,img_gray,CV_RGB2GRAY);
     double angle = izracunaj_odstupanje(img_gray);
-    img_gray = ukloni_rotaciju(img_gray,angle);
+    if(angle > 2)
+        img_gray = ukloni_rotaciju(img_gray,angle);
+    else
+      bitwise_not(img_gray, img_gray);
     resize(img_gray, img_gray, Size(500,770), 0, 0, INTER_CUBIC);  //prilagodjavanje optimalnoj rezoluciji
-    img = img_gray;
+  //  img = img_gray;
    // ImageAdjust( img_gray, img_gray, 0, 1, 0.3, 1, 0.5);  //iz nekog razloga nakon rotacije slika postaje svjetlija pa nema potrebe za ovim ako se vrši rotacija
     for ( int i = 1; i < 8; i = i + 2 )
     medianBlur(img_gray,img_gray,i);
