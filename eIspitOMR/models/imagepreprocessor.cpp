@@ -100,6 +100,7 @@ double izracunaj_odstupanje(Mat image){
     return angle;*/
 }
 
+
 Mat ukloni_rotaciju(Mat src,double angle){
     bitwise_not(src, src);
     vector<Point> points;
@@ -108,21 +109,26 @@ Mat ukloni_rotaciju(Mat src,double angle){
      for (; it != end; ++it)
        if (*it)
          points.push_back(it.pos());
-     RotatedRect box = minAreaRect(Mat(points));
-     Size box_size = box.size;
-    if (box.angle < -45.){
-         Size temp = box_size;
-            box_size.width=box_size.height;
-            box_size.height = temp.width;
-       //swap(box_size.width, box_size.height);
-     }
-     Mat rotated;
-     Mat rot_mat = cv::getRotationMatrix2D(box.center, angle, 1);
-     warpAffine(src, rotated, rot_mat, src.size(), cv::INTER_CUBIC);
-     Mat cropped;
-     getRectSubPix(rotated, box_size, box.center, cropped);
-     return cropped;
 
+     RotatedRect box = minAreaRect(Mat(points));
+     Mat rotated;
+     cv::Size box_size = box.size;
+     if (box.angle < -45.){
+        //angle+=90.;
+         std::swap(box_size.width, box_size.height);
+     }
+     Mat rot_mat = cv::getRotationMatrix2D(box.center, angle, 1);
+     warpAffine(src, rotated, rot_mat, src.size(), INTER_CUBIC);
+
+
+    Mat cropped;
+    int ly = fabs(box.center.y-box.size.width)/2;
+    int lx = fabs(box.center.x-box.size.height/2);
+    int sirina = box.size.width;
+    int duzina = box.size.height;
+     Mat(rotated,Rect(lx,ly,duzina,sirina)).copyTo(cropped);
+    // cv::getRectSubPix(rotated, box_size, box.center, cropped);
+     return cropped;
 }
 
 Mat ImagePreprocessor::prepare(Mat img)
@@ -132,16 +138,16 @@ Mat ImagePreprocessor::prepare(Mat img)
     double angle = izracunaj_odstupanje(img_gray);
     img_gray = ukloni_rotaciju(img_gray,angle);
     resize(img_gray, img_gray, Size(500,770), 0, 0, INTER_CUBIC);  //prilagodjavanje optimalnoj rezoluciji
-   // img = img_gray;
+    img = img_gray;
    // ImageAdjust( img_gray, img_gray, 0, 1, 0.3, 1, 0.5);  //iz nekog razloga nakon rotacije slika postaje svjetlija pa nema potrebe za ovim ako se vrši rotacija
-    for ( int i = 1; i < 8; i = i + 2 )
+   /* for ( int i = 1; i < 8; i = i + 2 )
     medianBlur(img_gray,img_gray,i);
     morphologyEx(img_gray,img_gray,MORPH_CLOSE,getStructuringElement(MORPH_ELLIPSE,Size(6,6),Point(-1,-1)));
     morphologyEx(img_gray,img_gray,MORPH_ERODE,getStructuringElement(MORPH_ELLIPSE,Size(4,4),Point(-1,-1)));
     normalize(img_gray,img_gray,0,255,NORM_MINMAX);
     threshold ( img_gray, bin_image, 0, 255, THRESH_BINARY | THRESH_OTSU );
-    img = bin_image;
-    //img = remove_small_objects(bin_image,200);
+    img = bin_image;*/
+    img = remove_small_objects(bin_image,200);
     //erode(bin_image,bin_image,MORPH_ELLIPSE,Point(-1,-1),100);
     return img;
 }

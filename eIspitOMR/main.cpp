@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 {
 
 
-    Mat image = cv::imread("ispit_rotiran_1.jpg");
+    Mat image = cv::imread("ispit_rotiran_2.jpg");
     imshow("Tess",ImagePreprocessor::prepare(image));
 
     /*QTime myTimer;
