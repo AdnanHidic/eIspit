@@ -5,6 +5,9 @@
 /// \param img - neobradjena slika
 /// \return rezultat obrade slike, fixne velicine, korektno orijentirano, crno bijelo, po mogucnosti da su prezivjele samo tackice
 ///
+///
+///
+//funkcija kreirana po uzoru na MATLAB imadjust funkciju koje nema u openCV, a daje zadovoljavajuce rezultate za ovakvu namjenu
 int ImageAdjust(Mat src1,Mat  dst1,double low, double high,double bottom, double top,double gamma ){
     IplImage* src = new IplImage(src1);
     IplImage* dst = new IplImage(dst1);
@@ -19,7 +22,7 @@ if(low<0 && low>1 && high <0 && high>1&&bottom<0 && bottom>1 && top<0 && top>1 &
     int x,y;
     double val;
 
-    // intensity transform
+    // Transformacija intenziteta
     for( y = 0; y < src->height; y++)
     {
         for (x = 0; x < src->width; x++)
@@ -34,34 +37,31 @@ if(low<0 && low>1 && high <0 && high>1&&bottom<0 && bottom>1 && top<0 && top>1 &
     return 0;
 }
 
+//funkcija sluzi za uklanjanje svih objekata na slici koji su manji od parametra size
 Mat remove_small_objects( Mat img_in1, int size )
 {
     IplImage* img_in = new IplImage(img_in1);
-    IplImage* img_out       = cvCloneImage( img_in );  // return image
-    CvMemStorage* storage   = cvCreateMemStorage( 0 );    // container of retrieved contours
+    IplImage* img_out       = cvCloneImage( img_in );
+    CvMemStorage* storage   = cvCreateMemStorage( 0 );
     CvSeq* contours         = NULL;
-    CvScalar black          = CV_RGB( 0, 0, 0 ); // black color
-    CvScalar white          = CV_RGB( 255, 255, 255 );   // white color
+    CvScalar black          = CV_RGB( 0, 0, 0 );
+    CvScalar white          = CV_RGB( 255, 255, 255 );
     double area;
 
-    // find contours in binary image
+    // sve konture u binarnoj slici
     cvFindContours( img_in, storage, &contours, sizeof( CvContour ), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE );
 
-    while( contours )   // loop over all the contours
-    {
+    while( contours ){
         area = cvContourArea( contours, CV_WHOLE_SEQ );
-        if( fabs( area ) <= size )  // if the area of the contour is less than threshold remove it
+        if( fabs( area ) <= size )  // ukoliko je manji parametra size
         {
-            // draws the contours into a new image
-
              cvDrawContours( img_out, contours, white, white, -1, CV_FILLED, 8 );
         }
         else
         {
-            // fills in holes
-            //cvDrawContours( img_out, contours, black, black, -1, CV_FILLED, 8 ); // removes white dots
+            //cvDrawContours( img_out, contours, black, black, -1, CV_FILLED, 8 );
         }
-        contours = contours->h_next;    // jump to the next contour
+        contours = contours->h_next;
     }
 
     cvReleaseMemStorage( &storage );
@@ -69,22 +69,79 @@ Mat remove_small_objects( Mat img_in1, int size )
     return img;
 }
 
+//funkcija za racunanje ugla rotacije slike odnosno sadrzaja na istoj
+double izracunaj_odstupanje(Mat image){
+    Size size = image.size();
+    bitwise_not(image, image);
+    Mat element = getStructuringElement(MORPH_RECT, Size(5, 3));
+    erode(image, image, element);
+    vector<Point> points;
+    Mat_<uchar>::iterator it = image.begin<uchar>();
+    Mat_<uchar>::iterator end = image.end<uchar>();
+    for (; it != end; ++it)
+      if (*it)
+        points.push_back(it.pos());
+    RotatedRect box = minAreaRect(Mat(points));
+    double angle = box.angle;
+    if (angle < -45.)
+      angle += 90.;
+    return angle;
+    /*vector<Vec4i> lines;
+    HoughLinesP(image, lines, 1, CV_PI/180, 100, size.width / 2.f, 20);
+    double angle = 0.;
+        unsigned nb_lines = lines.size();
+        for (unsigned i = 0; i < nb_lines; ++i)
+        {
+            //cv::line(disp_lines, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(255, 0 ,0));
+            angle += atan2((double)lines[i][3] - lines[i][1],
+                           (double)lines[i][2] - lines[i][0]);
+        }
+    angle /= nb_lines; // mean angle, in radians.
+    return angle;*/
+}
+
+Mat ukloni_rotaciju(Mat src,double angle){
+    bitwise_not(src, src);
+    vector<Point> points;
+    Mat_<uchar>::iterator it = src.begin<uchar>();
+    Mat_<uchar>::iterator end = src.end<uchar>();
+     for (; it != end; ++it)
+       if (*it)
+         points.push_back(it.pos());
+     RotatedRect box = minAreaRect(Mat(points));
+     Size box_size = box.size;
+    if (box.angle < -45.){
+         Size temp = box_size;
+            box_size.width=box_size.height;
+            box_size.height = temp.width;
+       //swap(box_size.width, box_size.height);
+     }
+     Mat rotated;
+     Mat rot_mat = cv::getRotationMatrix2D(box.center, angle, 1);
+     warpAffine(src, rotated, rot_mat, src.size(), cv::INTER_CUBIC);
+     Mat cropped;
+     getRectSubPix(rotated, box_size, box.center, cropped);
+     return cropped;
+
+}
 
 Mat ImagePreprocessor::prepare(Mat img)
 {
     Mat img_gray, bin_image;
     cv::cvtColor(img,img_gray,CV_RGB2GRAY);
-    //rotacija + podesavanje
-    ImageAdjust( img_gray, img_gray, 0, 1, 0.3, 1, 0.5);
+    double angle = izracunaj_odstupanje(img_gray);
+    img_gray = ukloni_rotaciju(img_gray,angle);
+    resize(img_gray, img_gray, Size(500,770), 0, 0, INTER_CUBIC);  //prilagodjavanje optimalnoj rezoluciji
+   // img = img_gray;
+   // ImageAdjust( img_gray, img_gray, 0, 1, 0.3, 1, 0.5);  //iz nekog razloga nakon rotacije slika postaje svjetlija pa nema potrebe za ovim ako se vrši rotacija
     for ( int i = 1; i < 8; i = i + 2 )
     medianBlur(img_gray,img_gray,i);
-  //  GaussianBlur( img_gray, img_gray, Size(9, 9), 2, 2 );
     morphologyEx(img_gray,img_gray,MORPH_CLOSE,getStructuringElement(MORPH_ELLIPSE,Size(6,6),Point(-1,-1)));
     morphologyEx(img_gray,img_gray,MORPH_ERODE,getStructuringElement(MORPH_ELLIPSE,Size(4,4),Point(-1,-1)));
     normalize(img_gray,img_gray,0,255,NORM_MINMAX);
     threshold ( img_gray, bin_image, 0, 255, THRESH_BINARY | THRESH_OTSU );
     img = bin_image;
-    img = remove_small_objects(bin_image,200);
+    //img = remove_small_objects(bin_image,200);
     //erode(bin_image,bin_image,MORPH_ELLIPSE,Point(-1,-1),100);
     return img;
 }
