@@ -211,7 +211,7 @@ FinishedExam ImageProcessor::load_exam(QString path)
 {
     FinishedExam exam ;
     // image is loaded from file
-    Mat img = imread(path.toStdString(),CV_LOAD_IMAGE_GRAYSCALE);
+    Mat img = imread(path.toStdString());
 
     // if the image could not be loaded, handle the unpleasantries
     if (img.data==NULL){
