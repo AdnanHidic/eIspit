@@ -86,18 +86,6 @@ double izracunaj_odstupanje(Mat image){
     if (angle < -45.)
       angle += 90.;
     return angle;
-    /*vector<Vec4i> lines;
-    HoughLinesP(image, lines, 1, CV_PI/180, 100, size.width / 2.f, 20);
-    double angle = 0.;
-        unsigned nb_lines = lines.size();
-        for (unsigned i = 0; i < nb_lines; ++i)
-        {
-            //cv::line(disp_lines, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(255, 0 ,0));
-            angle += atan2((double)lines[i][3] - lines[i][1],
-                           (double)lines[i][2] - lines[i][0]);
-        }
-    angle /= nb_lines; // mean angle, in radians.
-    return angle;*/
 }
 
 
@@ -112,22 +100,25 @@ Mat ukloni_rotaciju(Mat src,double angle){
 
      RotatedRect box = minAreaRect(Mat(points));
      Mat rotated;
-     cv::Size box_size = box.size;
-     if (box.angle < -45.){
-        //angle+=90.;
-         std::swap(box_size.width, box_size.height);
-     }
+
      Mat rot_mat = cv::getRotationMatrix2D(box.center, angle, 1);
-     warpAffine(src, rotated, rot_mat, src.size(), INTER_CUBIC);
-
-
+     warpAffine(src, rotated, rot_mat, src.size(), INTER_CUBIC, cv::BORDER_CONSTANT, cv::Scalar(255,255,255));
+    Mat pom;
+    rotated.copyTo(pom);
+    bitwise_not(pom,pom);
+    points.clear();
+    it = pom.begin<uchar>();
+    end = pom.end<uchar>();
+     for (; it != end; ++it)
+       if (*it)
+         points.push_back(it.pos());
+    box = minAreaRect(Mat(points));
+    cv::Size box_size = box.size;
+    if (box.angle < -45.){
+        std::swap(box_size.width, box_size.height);
+    }
     Mat cropped;
-    int ly = fabs(box.center.y-box.size.width)/2;
-    int lx = fabs(box.center.x-box.size.height/2);
-    int sirina = box.size.width;
-    int duzina = box.size.height;
-     Mat(rotated,Rect(lx,ly,duzina,sirina)).copyTo(cropped);
-    // cv::getRectSubPix(rotated, box_size, box.center, cropped);
+    cv::getRectSubPix(rotated, box_size, box.center, cropped);
      return cropped;
 }
 
@@ -140,15 +131,14 @@ Mat ImagePreprocessor::prepare(Mat img)
     resize(img_gray, img_gray, Size(500,770), 0, 0, INTER_CUBIC);  //prilagodjavanje optimalnoj rezoluciji
     img = img_gray;
    // ImageAdjust( img_gray, img_gray, 0, 1, 0.3, 1, 0.5);  //iz nekog razloga nakon rotacije slika postaje svjetlija pa nema potrebe za ovim ako se vrši rotacija
-   /* for ( int i = 1; i < 8; i = i + 2 )
+    for ( int i = 1; i < 8; i = i + 2 )
     medianBlur(img_gray,img_gray,i);
     morphologyEx(img_gray,img_gray,MORPH_CLOSE,getStructuringElement(MORPH_ELLIPSE,Size(6,6),Point(-1,-1)));
     morphologyEx(img_gray,img_gray,MORPH_ERODE,getStructuringElement(MORPH_ELLIPSE,Size(4,4),Point(-1,-1)));
     normalize(img_gray,img_gray,0,255,NORM_MINMAX);
     threshold ( img_gray, bin_image, 0, 255, THRESH_BINARY | THRESH_OTSU );
-    img = bin_image;*/
+    img = bin_image;
     img = remove_small_objects(bin_image,200);
-    //erode(bin_image,bin_image,MORPH_ELLIPSE,Point(-1,-1),100);
     return img;
 }
 
