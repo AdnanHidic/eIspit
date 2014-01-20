@@ -12,9 +12,8 @@ int main(int argc, char *argv[])
 {
 
 
-    //Mat image = cv::imread("ispit_rotiran_1.jpg");
-    //imshow("Tess",ImagePreprocessor::prepare(image));
-
+    Mat image = cv::imread("hajdar_scan_zuba_mod.jpg");
+    imshow("Tess",ImagePreprocessor::prepare(image));
     /*QTime myTimer;
     myTimer.start();
     Mat novo = ImagePreprocessor::prepare(image);

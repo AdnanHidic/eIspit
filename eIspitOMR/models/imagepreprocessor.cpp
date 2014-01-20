@@ -100,7 +100,6 @@ Mat ukloni_rotaciju(Mat src,double angle){
 
      RotatedRect box = minAreaRect(Mat(points));
      Mat rotated;
-
      Mat rot_mat = cv::getRotationMatrix2D(box.center, angle, 1);
      warpAffine(src, rotated, rot_mat, src.size(), INTER_CUBIC, cv::BORDER_CONSTANT, cv::Scalar(255,255,255));
     Mat pom;
@@ -122,22 +121,45 @@ Mat ukloni_rotaciju(Mat src,double angle){
      return cropped;
 }
 
+Mat crop_image(Mat img)
+{
+    bitwise_not(img, img);
+    vector<Point> points;
+    Mat_<uchar>::iterator it = img.begin<uchar>();
+    Mat_<uchar>::iterator end = img.end<uchar>();
+    for (; it != end; ++it)
+      if (*it)
+        points.push_back(it.pos());
+   RotatedRect box = minAreaRect(Mat(points));
+   cv::Size box_size = box.size;
+   if (box.angle < -45.){
+       std::swap(box_size.width, box_size.height);
+   }
+   Mat cropped;
+   cv::getRectSubPix(img, box_size, box.center, cropped);
+    return cropped;
+}
+
 Mat ImagePreprocessor::prepare(Mat img)
 {
     Mat img_gray, bin_image;
     cv::cvtColor(img,img_gray,CV_RGB2GRAY);
     double angle = izracunaj_odstupanje(img_gray);
-    if(angle > 2)
+    if(angle > 0.1 || angle < -0.1)
         img_gray = ukloni_rotaciju(img_gray,angle);
-    else
-      bitwise_not(img_gray, img_gray);
+    else{
+        //bitwise_not(img_gray, img_gray);
+        img_gray = crop_image(img_gray);
+        return img_gray;
+    }
+    //img_gray = crop_image(img_gray);
     resize(img_gray, img_gray, Size(500,770), 0, 0, INTER_CUBIC);  //prilagodjavanje optimalnoj rezoluciji
   //  img = img_gray;
    // ImageAdjust( img_gray, img_gray, 0, 1, 0.3, 1, 0.5);  //iz nekog razloga nakon rotacije slika postaje svjetlija pa nema potrebe za ovim ako se vrši rotacija
     for ( int i = 1; i < 8; i = i + 2 )
     medianBlur(img_gray,img_gray,i);
-    morphologyEx(img_gray,img_gray,MORPH_CLOSE,getStructuringElement(MORPH_ELLIPSE,Size(6,6),Point(-1,-1)));
-    morphologyEx(img_gray,img_gray,MORPH_ERODE,getStructuringElement(MORPH_ELLIPSE,Size(4,4),Point(-1,-1)));
+    morphologyEx(img_gray,img_gray,MORPH_CLOSE,getStructuringElement(MORPH_ELLIPSE,Size(10,10),Point(-1,-1)));
+    morphologyEx(img_gray,img_gray,MORPH_ERODE,getStructuringElement(MORPH_ELLIPSE,Size(6,6),Point(-1,-1)));
     normalize(img_gray,img_gray,0,255,NORM_MINMAX);
     threshold ( img_gray, bin_image, 0, 255, THRESH_BINARY | THRESH_OTSU );
     img = bin_image;
