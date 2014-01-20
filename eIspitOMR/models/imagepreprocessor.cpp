@@ -94,17 +94,16 @@ Mat ukloni_rotaciju(Mat src,double angle){
     vector<Point> points;
     Mat_<uchar>::iterator it = src.begin<uchar>();
     Mat_<uchar>::iterator end = src.end<uchar>();
-     for (; it != end; ++it)
-       if (!(*it))
-         points.push_back(it.pos());
+    for (; it != end; ++it)
+        if (!(*it))
+            points.push_back(it.pos());
 
-     RotatedRect box = minAreaRect(Mat(points));
-     Mat rotated;
-     Mat rot_mat = cv::getRotationMatrix2D(box.center, angle, 1);
-     warpAffine(src, rotated, rot_mat, src.size(), INTER_CUBIC, cv::BORDER_CONSTANT, cv::Scalar(255,255,255));
+    RotatedRect box = minAreaRect(Mat(points));
+    Mat rotated;
+    Mat rot_mat = cv::getRotationMatrix2D(box.center, angle, 1);
+    warpAffine(src, rotated, rot_mat, src.size(), INTER_CUBIC, cv::BORDER_CONSTANT, cv::Scalar(255,255,255));
     Mat pom;
     rotated.copyTo(pom);
-    //bitwise_not(pom,pom);
     points.clear();
     it = pom.begin<uchar>();
     end = pom.end<uchar>();
@@ -123,20 +122,20 @@ Mat ukloni_rotaciju(Mat src,double angle){
 
 Mat crop_image(Mat img)
 {
-    bitwise_not(img, img);
+    bitwise_not(img,img);
     vector<Point> points;
     Mat_<uchar>::iterator it = img.begin<uchar>();
     Mat_<uchar>::iterator end = img.end<uchar>();
     for (; it != end; ++it)
       if (!(*it))
         points.push_back(it.pos());
-   RotatedRect box = minAreaRect(Mat(points));
-   cv::Size box_size = box.size;
-   if (box.angle < -45.){
-       std::swap(box_size.width, box_size.height);
-   }
-   Mat cropped;
-   cv::getRectSubPix(img, box_size, box.center, cropped);
+    RotatedRect box = minAreaRect(Mat(points));
+    cv::Size box_size = box.size;
+    if (box.angle < -45.){
+        std::swap(box_size.width, box_size.height);
+    }
+    Mat cropped;
+    cv::getRectSubPix(img, box_size, box.center, cropped);
     return cropped;
 }
 
@@ -148,12 +147,10 @@ Mat ImagePreprocessor::prepare(Mat img)
     if(angle > 0.1 || angle < -0.1)
         img_gray = ukloni_rotaciju(img_gray,angle);
     else{
-        //bitwise_not(img_gray, img_gray);
         img_gray = crop_image(img_gray);
     }
-    //img_gray = crop_image(img_gray);
     resize(img_gray, img_gray, Size(500,770), 0, 0, INTER_CUBIC);  //prilagodjavanje optimalnoj rezoluciji
-  //  img = img_gray;
+
    // ImageAdjust( img_gray, img_gray, 0, 1, 0.3, 1, 0.5);  //iz nekog razloga nakon rotacije slika postaje svjetlija pa nema potrebe za ovim ako se vrši rotacija
     for ( int i = 1; i < 8; i = i + 2 )
     medianBlur(img_gray,img_gray,i);

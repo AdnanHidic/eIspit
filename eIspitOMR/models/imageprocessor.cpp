@@ -55,8 +55,8 @@ FinishedExam ImageProcessor::extract(Mat img)
 GroupID ImageProcessor::extract_group(const Mat &img)
 {
     // first we get the subimage that contains our Region Of Interest
-    Mat ROI(img,Rect(36,480,210,20));
-
+    Mat ROI(img,Rect(28,490,210,26));
+    //imshow("group roi",ROI);
     // then we count the number of black pixels within characteristic bounding boxes
     // bounding box size iz 10x10, making 100 pixels. success pct dictates the number of black pixels
     // within the bounding box which is considered a filled field
@@ -105,10 +105,9 @@ QVector<int> ImageProcessor::count_pixels_group(const Mat &img)
 QString ImageProcessor::extract_candidateID(const Mat &img)
 {
     // first we get the subimage that contains our Region Of Interest
-    Mat ROI(img,Rect(75,580,132,172));
+    Mat ROI(img,Rect(70,590,132,172));
     int criteria = bbox_height*bbox_width*group_success_pct;
-
-    //imshow("Subsection", ROI);
+    //imshow("cid roi",ROI);
 
     // then we get the indexes of filled bounding boxes one by one, if multiple are selected, empty string is returned
     // foreach group
@@ -182,14 +181,14 @@ QVector<int> ImageProcessor::count_pixels_by_row(Mat &img, int startX, int start
 QVector<AnswerID> ImageProcessor::extract_answers(const Mat &img)
 {
     // first we get the subimage that contains our Region Of Interest
-    Mat ROI(img,Rect(386,244,100,502));
+    Mat ROI(img,Rect(400,250,100,510));
     int criteria = bbox_height*bbox_width*answ_success_pct;
 
     QVector<AnswerID> answers(20);
     QVector<int> pixels_per_choice;
     // foreach question
     for (int i = 0; i < 20; i++){
-        pixels_per_choice = count_pixels_by_row(ROI,answ_bbox_x_start,answ_bbox_y_start + i * answ_bbox_y_offset,answ_bbox_x_offset,4);
+        pixels_per_choice = count_pixels_by_row(ROI,answ_bbox_x_start,answ_bbox_y_start + i * answ_bbox_y_offset + i/2,answ_bbox_x_offset,4);
         for (int j = 0; j < 4; j++){
             if (pixels_per_choice[j] >= criteria){
                 if (answers[i]==AnswerID_NONE){
@@ -202,7 +201,8 @@ QVector<AnswerID> ImageProcessor::extract_answers(const Mat &img)
             }
         }
     }
-    //imshow("Name",ROI);
+
+    //imshow("lolz",ROI);
 
     return answers;
 }
@@ -221,7 +221,7 @@ FinishedExam ImageProcessor::load_exam(QString path)
 
     // now we prepare the image for further processing
     img = ImagePreprocessor::prepare(img);
-    imshow("Zubin rezultat",img);
+    //imshow("Zubin rezultat",img);
     // now we extract the exam from the prepared image
     exam = extract(img);
 
