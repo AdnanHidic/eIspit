@@ -221,7 +221,7 @@ FinishedExam ImageProcessor::load_exam(QString path)
 
     // now we prepare the image for further processing
     img = ImagePreprocessor::prepare(img);
-
+    imshow("Zubin rezultat",img);
     // now we extract the exam from the prepared image
     exam = extract(img);
 

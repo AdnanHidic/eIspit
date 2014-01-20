@@ -95,7 +95,7 @@ Mat ukloni_rotaciju(Mat src,double angle){
     Mat_<uchar>::iterator it = src.begin<uchar>();
     Mat_<uchar>::iterator end = src.end<uchar>();
      for (; it != end; ++it)
-       if (*it)
+       if (!(*it))
          points.push_back(it.pos());
 
      RotatedRect box = minAreaRect(Mat(points));
@@ -104,12 +104,12 @@ Mat ukloni_rotaciju(Mat src,double angle){
      warpAffine(src, rotated, rot_mat, src.size(), INTER_CUBIC, cv::BORDER_CONSTANT, cv::Scalar(255,255,255));
     Mat pom;
     rotated.copyTo(pom);
-    bitwise_not(pom,pom);
+    //bitwise_not(pom,pom);
     points.clear();
     it = pom.begin<uchar>();
     end = pom.end<uchar>();
      for (; it != end; ++it)
-       if (*it)
+       if (!(*it))
          points.push_back(it.pos());
     box = minAreaRect(Mat(points));
     cv::Size box_size = box.size;
@@ -118,7 +118,7 @@ Mat ukloni_rotaciju(Mat src,double angle){
     }
     Mat cropped;
     cv::getRectSubPix(rotated, box_size, box.center, cropped);
-     return cropped;
+    return cropped;
 }
 
 Mat crop_image(Mat img)
@@ -128,7 +128,7 @@ Mat crop_image(Mat img)
     Mat_<uchar>::iterator it = img.begin<uchar>();
     Mat_<uchar>::iterator end = img.end<uchar>();
     for (; it != end; ++it)
-      if (*it)
+      if (!(*it))
         points.push_back(it.pos());
    RotatedRect box = minAreaRect(Mat(points));
    cv::Size box_size = box.size;
@@ -150,7 +150,6 @@ Mat ImagePreprocessor::prepare(Mat img)
     else{
         //bitwise_not(img_gray, img_gray);
         img_gray = crop_image(img_gray);
-        return img_gray;
     }
     //img_gray = crop_image(img_gray);
     resize(img_gray, img_gray, Size(500,770), 0, 0, INTER_CUBIC);  //prilagodjavanje optimalnoj rezoluciji
