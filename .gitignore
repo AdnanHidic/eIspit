@@ -7,3 +7,5 @@
 /eIspitOMR/Makefile
 /eIspitOMR/eIspitOMR.pro.user
 /build-*
+/eIspitOMR/openCV
+/eIspitOMR/samples
