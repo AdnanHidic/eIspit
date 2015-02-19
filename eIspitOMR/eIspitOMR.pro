@@ -5,6 +5,9 @@
 # Mora biti u env pathu i bin folder:  D:\ETF\P MMS\Seminarski\eIspit\openCV\x64\mingw\bin i bin od qt:  E:\Qt\Tools\QtCreator\bin;
 # samo zavisi gdje ste na svom racunaru instalirali ovo
 #
+# Make sure INCLUDEPATH and LIBS paths are correct
+# Make sure environment path variable contains openCV bin and QtCreator bin folders
+#
 #-------------------------------------------------
 include(models/models.pri)
 
