@@ -2,10 +2,9 @@
 /eIspitOMR/release/moc_mainwindow.o
 /eIspitOMR/release
 /eIspitOMR/debug
+/eIspitOMR/openCV
 /eIspitOMR/Makefile.Debug
 /eIspitOMR/Makefile.Release
 /eIspitOMR/Makefile
 /eIspitOMR/eIspitOMR.pro.user
 /build-*
-/eIspitOMR/openCV
-/eIspitOMR/samples
